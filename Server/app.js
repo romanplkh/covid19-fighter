@@ -1,31 +1,13 @@
-const mqtt = require("mqtt");
+const express = require("express");
+const app = express();
 const controller = require("./controller")
 
-const config = {
-    clientId: "roman",
-    username: "hack",
-    password: "hack1234"
-}
+app.use(express.static(__dirname + "/public"))
 
-const client = mqtt.connect("mqtt://mga.twilightparadox.com", config)
-
-
-client.on('connect', function () {
-    client.subscribe('randomnerds', function (err) {
-        if (!err) {
-            client.publish('randomnerds', 'Hello From Server')
-        }
-    })
+app.use("/", (req, res, next) => {
+    res.sendFile(`${__dirname}/public/game.html`)
 })
 
-client.on('message', function (topic, message) {
-    // message is Buffer
-    console.log(message.toString())
-    const l = new controller.Logic();
-
-    // l.test();
-    //client.end()
-    //process.exit()
-})
-
-client.on("error", function (error) { console.log("Can't connect" + error) });
+app.listen(3000, () => {
+    console.log("Server is listening on port 3000")
+});

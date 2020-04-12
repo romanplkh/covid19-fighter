@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/superhero/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-R/oa7KS0iDoHwdh4Gyl3/fU7pgvSCt7oyuQ79pkw+e+bMWD9dzJJa+Zqd+XJS0AD"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="mx-auto text-center" id="personalData">
+        <div class="form-group">
+          <h1 class="display-4">Username:</h1>
+          <input class="form-control" type="text" id="userName" />
+        </div>
+        <button id="registerPlayer" class="btn btn-warning">Save</button>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <div class="col-md-6">
+              <h1 class="display-4" id="txtPlayer">
+                Player: <span id="playerName"></span>
+              </h1>
+            </div>
+            <div class="col-md-6 text-right">
+              <h1 class="display-4" id="txtScore">
+                Score: <span id="playerScore"></span>
+              </h1>
+            </div>
+          </div>
+          <h1 class="text-center" id="score">
+            0
+          </h1>
+          <button class="text-center btn btn-success" id="btn">
+            Start The Game
+          </button>
+        </div>
+      </div>
+
+      <hr />
+    </div>
+    <div class="container mt-5">
+      <div class="row my-5">
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+      </div>
+
+      <div class="row my-5">
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+      </div>
+
+      <div class="row my-5">
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+        <div class="col-md-4">
+          <div class="bush"></div>
+          <div class="virus"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="usersList">
+        <ul id="usersList">
+        </ul>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js"
+      type="text/javascript"
+    ></script>
+    <script src="client.js"></script>
+  </body>
+</html>
