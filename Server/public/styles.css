@@ -1,6 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Creepster&display=swap");
+
 body {
   font-family: "Creepster", cursive;
+}
+
+.cursor-aim {
+  cursor: url("img/aim_PNG42.png") 64 64, auto;
 }
 
 .bush {
@@ -16,23 +21,24 @@ body {
 .virus {
   background: url("img/Virus.svg") center no-repeat;
   background-size: contain;
-  background-size: 20%;
+  background-size: 50%;
   position: absolute;
   z-index: 0;
-  top: 0;
-  left: 0;
-  width: 100%;
+  top: 50%;
+  left: 50%;
+  width: 50%;
   height: 100px;
   transition: all 0.125s;
+  transform: translate(-50%, -50%);
 }
 
-.virus:hover {
+/* .virus:hover {
   cursor: pointer;
-}
+} */
 
 .virus.show {
-  top: -55px;
-  background-size: 35%;
+  top: -30%;
+  background-size: 40%;
   transition: all 0.3s;
 }
 

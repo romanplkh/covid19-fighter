@@ -34,8 +34,8 @@ const virusImageSplash = document.querySelector("#virus-image-splash");
 const playersListContainer = document.querySelector("#playersContainer");
 const virusesGameField = document.querySelector("#viruses-game-field");
 const dashboard = document.querySelector("#dashboard")
+const smash = document.querySelector("#smash")
 // splashAudio.setAttribute("muted", true)
-
 
 
 let client = {};
@@ -66,11 +66,6 @@ function onConnect() {
     console.log("connected " + client.clientId)
     sendMessageObject({ action: ON_USER_JOIN, payload: { userId: client.clientId, userScore: 0 } }, RANDOM_NERDS_SERVER)
     personalDataBlock.style.display = "none";
-
-
-
-
-
 }
 
 
@@ -103,11 +98,7 @@ const gameState = {
     users: []
 };
 
-btnStartGame.addEventListener("click", (ev) => {
-    //STOP AUDIO SPLASH
-    splashAudio.pause();
-    sendMessageObject({ action: START_THE_GAME }, RANDOM_NERDS_SERVER)
-})
+
 
 
 
@@ -138,6 +129,7 @@ function reducer({ action, payload }) {
             gameState.gameIsPlaying = payload.gameIsPlaying;
             alert("WINNER IS " + payload.user.userId)
             enableStartGameButton(!gameState.gameIsPlaying)
+            gameCursorEnable(false)
             break;
         case ON_USER_JOIN:
             //ADD USER TO LIST OF USER
@@ -162,6 +154,20 @@ function reducer({ action, payload }) {
 
 
 
+btnStartGame.addEventListener("click", (ev) => {
+    //STOP AUDIO SPLASH
+    splashAudio.pause();
+    sendMessageObject({ action: START_THE_GAME }, RANDOM_NERDS_SERVER)
+    gameCursorEnable(true)
+
+    virusesGameField.addEventListener("click", (ev) => {
+        if (ev.target.className != "virus") {
+            shotGunAudio.play()
+        }
+
+    })
+})
+
 
 function showVirus() {
     if (gameState.gameIsPlaying) {
@@ -179,7 +185,9 @@ function showVirus() {
 
 function getScore() {
     sendMessageObject({ action: CALCULATE_SCORE, payload: { userId: client.clientId } }, RANDOM_NERDS_SERVER)
-    shotGunAudio.play()
+
+    //PLAY SOUND HIT TARGET
+    smash.play();
 }
 
 function displayPlayerScore(id, score) {
@@ -233,12 +241,22 @@ function showError(error) {
 
 }
 
+
+//HIT VIRUS
 viruses.forEach(virus => {
     virus.addEventListener("click", getScore)
 })
 
 
-//ImageVirusSlash
+//CursorAIM
+function gameCursorEnable(condition) {
+    if (condition) {
+        document.body.classList.add("cursor-aim");
+    } else {
+        document.body.classList.remove("cursor-aim");
+    }
+
+}
 
 
 
@@ -269,7 +287,7 @@ setTimeout(() => {
     setTimeout(() => {
         splash.style.display = "none";
     }, 900)
-}, 15000)
+}, 100)
 
 
 function gameUserRegistrationShow() {
