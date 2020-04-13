@@ -34,42 +34,88 @@ const virusImageSplash = document.querySelector("#virus-image-splash");
 const playersListContainer = document.querySelector("#playersContainer");
 const virusesGameField = document.querySelector("#viruses-game-field");
 const dashboard = document.querySelector("#dashboard")
-const smash = document.querySelector("#smash")
+const smashAudio = document.querySelector("#smash")
+const errorAlert = document.querySelector("#errorAlert")
 // splashAudio.setAttribute("muted", true)
 
 
 let client = {};
 
+const titles = ["The Mammoth",
+    "The Martyr",
+    "The Silencer",
+    "The Undying",
+    "The Ox",
+    "True Claw",
+    "Giantstare",
+    "Silentcut",
+    "Warhallow",
+    "Ironsword",
+    "The Butcher",
+    "The Bloodlust",
+    "The Terror",
+    "The Limp",
+    "Doom Scar",
+    "Strongclaw",
+    "Ravenblow",
+    "Gold Hide",
+    "Thundercleaver",
+    "The Shepherd",
+    "The Deceiver",
+    "The Cursed",
+    "The Scarred One",
+    "The Firestarter",
+    "Sharp Might",
+    "Singlecrest",
+    "Wolf Fist",
+    "Brightcleaver",
+    "Singlesword"
+]
+
 registerPlayerBtn.addEventListener("click", () => {
-    const username = userNameInput.value;
-    playerNameText.innerHTML = username;
-    playerScoreText.innerHTML = 0;
-    //CREATE CLIENT
-    const cl = new Paho.MQTT.Client("mga.twilightparadox.com", Number(8083), username);
+    let username = userNameInput.value;
+    if (!username) {
+        toggleError(true, "Username is required")
+    } else {
+        username += "_" + titles[Math.floor(Math.random() * titles.length)];
+        playerNameText.innerHTML = username;
+        playerScoreText.innerHTML = 0;
+        //CREATE CLIENT
+        const cl = new Paho.MQTT.Client("mga.twilightparadox.com", Number(8083), username);
 
-    cl.disconnectedPublishing = true;
-    cl.onConnectionLost = onConnectionLost;
-    cl.onMessageArrived = onMessageArrived;
-    client = cl;
+        cl.disconnectedPublishing = true;
+        cl.onConnectionLost = onConnectionLost;
+        cl.onMessageArrived = onMessageArrived;
+        client = cl;
 
-    client.connect({ onSuccess: onConnect, userName: "hack", password: "hack1234" });
-
-
+        client.connect({ onSuccess: onConnect, userName: "hack", password: "hack1234" });
+    }
 })
+
 
 
 // SUNSCRIBE
 function onConnect() {
-    //SHOW GAME PANEL
-    gameUserRegistrationShow();
+
+
+    //VALIDATE USERNAME IS NOT ALREADY TAKEN
+
+
+
+
     client.subscribe(RANDOM_NERDS_CLIENT);
     console.log("connected " + client.clientId)
     sendMessageObject({ action: ON_USER_JOIN, payload: { userId: client.clientId, userScore: 0 } }, RANDOM_NERDS_SERVER)
     personalDataBlock.style.display = "none";
+
+
+    //SHOW GAME PANEL
+    hideGameRegistrationForm();
 }
 
 
 function onConnectionLost(responseObject) {
+    console.log(responseObject)
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
     }
@@ -95,7 +141,7 @@ const gameState = {
     // score: 0,
     randomTime: 300,
     playerScore: 0,
-    users: []
+    // users: []
 };
 
 
@@ -133,8 +179,8 @@ function reducer({ action, payload }) {
             break;
         case ON_USER_JOIN:
             //ADD USER TO LIST OF USER
-            addUsersToListState(payload)
-            renderUserList(gameState.users)
+            //addUsersToListState(payload)
+            renderUserList(payload)
             break;
         case ON_USER_LEAVE:
             renderUserList(payload)
@@ -187,7 +233,7 @@ function getScore() {
     sendMessageObject({ action: CALCULATE_SCORE, payload: { userId: client.clientId } }, RANDOM_NERDS_SERVER)
 
     //PLAY SOUND HIT TARGET
-    smash.play();
+    smashAudio.play();
 }
 
 function displayPlayerScore(id, score) {
@@ -234,10 +280,34 @@ function resetCurrentUser(arrayUsers) {
     })
 }
 
-
+function hideErrorClick() {
+    toggleError(false, "")
+}
 
 //@TODO:
-function showError(error) {
+function toggleError(show, error) {
+    errorAlert.classList.remove("bounceInLeft");
+    errorAlert.classList.remove("bounceOutRight");
+    errorAlert.classList.remove("animated");
+
+    if (show) {
+
+        errorAlert.style.display = "block";
+        errorAlert.classList.add("animated");
+        errorAlert.classList.add("bounceInLeft");
+        errorAlert.querySelector("#error-text").innerHTML = error
+
+        errorAlert.querySelector("span").addEventListener("click", hideErrorClick)
+    } else {
+        errorAlert.classList.add("animated");
+        errorAlert.classList.add("bounceOutRight");
+
+        setTimeout(() => {
+            errorAlert.style.display = "none";
+        }, 800)
+
+        errorAlert.querySelector("span").removeEventListener("click", hideErrorClick)
+    }
 
 }
 
@@ -290,7 +360,7 @@ setTimeout(() => {
 }, 100)
 
 
-function gameUserRegistrationShow() {
+function hideGameRegistrationForm() {
     playersListContainer.style.display = "block"
     virusesGameField.style.display = "block";
     dashboard.style.display = "block";

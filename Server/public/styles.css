@@ -4,6 +4,12 @@ body {
   font-family: "Creepster", cursive;
 }
 
+#errorAlert {
+  display: none;
+  text-align: center;
+  font-size: 2.3em;
+}
+
 .cursor-aim {
   cursor: url("img/aim_PNG42.png") 64 64, auto;
 }
