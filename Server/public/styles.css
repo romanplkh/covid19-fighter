@@ -1,0 +1,193 @@
+@import url("https://fonts.googleapis.com/css2?family=Creepster&display=swap");
+body {
+  font-family: "Creepster", cursive;
+}
+
+.bush {
+  display: block;
+  background: url("img/bush.svg") center no-repeat;
+  background-size: contain;
+  position: relative;
+  height: 100px;
+  width: 100%;
+  z-index: 2;
+}
+
+.virus {
+  background: url("img/Virus.svg") center no-repeat;
+  background-size: contain;
+  background-size: 20%;
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  transition: all 0.125s;
+}
+
+.virus:hover {
+  cursor: pointer;
+}
+
+.virus.show {
+  top: -55px;
+  background-size: 35%;
+  transition: all 0.3s;
+}
+
+.usersList {
+  font-size: 1.5em;
+  font-stretch: expanded;
+}
+
+#usersList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#usersList li {
+  background-color: #5cb85c;
+  margin-bottom: 5px;
+  letter-spacing: 0.1em;
+}
+
+#userName {
+  border: none;
+  padding: 10px 0;
+  border-bottom: solid 1px #5cb85c;
+  background: transparent;
+  color: #5cb85c;
+  font-size: 2.3em;
+  text-align: center;
+}
+
+#userName:focus {
+  box-shadow: none;
+  outline: none;
+  background-position: 0 0;
+}
+
+#splash {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #2b3e50;
+  z-index: 4;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#virus-image-splash {
+  animation: spin 8s linear infinite;
+}
+
+#splash-title {
+  font-size: 7em;
+}
+
+.fa-volume-up {
+  position: absolute;
+  left: 2%;
+  top: 5%;
+  font-size: 2em;
+}
+
+.fa-volume-up:hover {
+  cursor: pointer;
+}
+
+/* .pulse {
+  animation-name: pulse;
+} */
+
+@keyframes loader {
+  0% {
+    width: 0;
+  }
+
+  20% {
+    width: 10%;
+  }
+
+  25% {
+    width: 24%;
+  }
+
+  43% {
+    width: 41%;
+  }
+
+  56% {
+    width: 50%;
+  }
+
+  66% {
+    width: 52%;
+  }
+
+  71% {
+    width: 60%;
+  }
+
+  75% {
+    width: 76%;
+  }
+
+  94% {
+    width: 86%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+.progress-bar {
+  border-radius: 60px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.progress-bar span {
+  display: block;
+}
+
+.bar {
+  background: rgba(0, 0, 0, 0.075);
+}
+
+.progress {
+  animation: loader 13s ease;
+  background: #5cb85c;
+  color: #fff;
+  padding: 5px;
+  width: 100%;
+}
+
+.progress-bar {
+  left: 50%;
+  max-width: 50%;
+  position: absolute;
+  top: 80%;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+#playersContainer {
+  display: none;
+}
+
+#viruses-game-field {
+  display: none;
+}
+
+#dashboard {
+  display: none;
+}
