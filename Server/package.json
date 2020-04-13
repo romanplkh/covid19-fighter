@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
-    "build": "bower install && grunt build"
+    "start": "nodemon app.js"
   },
   "author": "Roman&Olena",
   "license": "ISC",
@@ -16,8 +15,5 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
-  },
-  "engines": {
-    "node": "13.x"
   }
 }

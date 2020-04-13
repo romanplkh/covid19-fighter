@@ -63,6 +63,7 @@ const reducer = ({ action, payload }) => {
             return { action: ON_USER_JOIN, payload: users }
         case ON_USER_LEAVE:
             removeUserFromList(payload);
+
             return { action: ON_USER_LEAVE, payload: users }
         default:
             return { action: "Default action" }
