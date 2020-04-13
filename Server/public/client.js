@@ -26,6 +26,15 @@ const playerNameText = document.querySelector("#playerName");
 const playerScoreText = document.querySelector("#playerScore");
 const usersListUL = document.querySelector("#usersList");
 const personalDataBlock = document.querySelector("#personalData");
+const splash = document.querySelector("#splash");
+const splashAudio = document.querySelector("#splash-audio");
+const shotGunAudio = document.querySelector("#shotgun");
+const soundIcon = document.querySelector(".fa-volume-up");
+const virusImageSplash = document.querySelector("#virus-image-splash");
+const playersListContainer = document.querySelector("#playersContainer");
+const virusesGameField = document.querySelector("#viruses-game-field");
+const dashboard = document.querySelector("#dashboard")
+// splashAudio.setAttribute("muted", true)
 
 
 
@@ -37,6 +46,8 @@ registerPlayerBtn.addEventListener("click", () => {
     playerScoreText.innerHTML = 0;
     //CREATE CLIENT
     const cl = new Paho.MQTT.Client("mga.twilightparadox.com", Number(8083), username);
+
+    cl.disconnectedPublishing = true;
     cl.onConnectionLost = onConnectionLost;
     cl.onMessageArrived = onMessageArrived;
     client = cl;
@@ -49,18 +60,21 @@ registerPlayerBtn.addEventListener("click", () => {
 
 // SUNSCRIBE
 function onConnect() {
+    //SHOW GAME PANEL
+    gameUserRegistrationShow();
     client.subscribe(RANDOM_NERDS_CLIENT);
     console.log("connected " + client.clientId)
     sendMessageObject({ action: ON_USER_JOIN, payload: { userId: client.clientId, userScore: 0 } }, RANDOM_NERDS_SERVER)
     personalDataBlock.style.display = "none";
 
+
+
+
+
 }
 
 
 function onConnectionLost(responseObject) {
-    // sendMessageObject({ action: ON_USER_LEAVE, payload: client.clientId }, RANDOM_NERDS_SERVER)
-
-    console.log(client.clientId)
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
     }
@@ -83,13 +97,15 @@ function sendMessageObject(value, destination) {
 const gameState = {
     randomBush: 0,
     gameIsPlaying: false,
-    score: 0,
+    // score: 0,
     randomTime: 300,
     playerScore: 0,
     users: []
 };
 
 btnStartGame.addEventListener("click", (ev) => {
+    //STOP AUDIO SPLASH
+    splashAudio.pause();
     sendMessageObject({ action: START_THE_GAME }, RANDOM_NERDS_SERVER)
 })
 
@@ -98,15 +114,18 @@ btnStartGame.addEventListener("click", (ev) => {
 function reducer({ action, payload }) {
     switch (action) {
         case CALCULATE_SCORE:
-            console.log(payload)
+            //Update score of all users in users list
             renderUserList(payload.users)
+            //Update user score
             displayPlayerScore(payload.user.userId, payload.user.userScore)
-            gameState.gameIsPlaying = payload.gameIsPlaying;
             break;
         case START_THE_GAME:
-            gameState.gameIsPlaying = payload;
-            //SET RANDOM TIME FOR gameState
-            //SHOW VIRUS
+            gameState.gameIsPlaying = payload.gameIsPlaying;
+            //Hide start button
+            enableStartGameButton(!gameState.gameIsPlaying);
+            //RESET USERS SCORE
+            resetCurrentUser(payload.users)
+            renderUserList(payload.users)
             showVirus()
             break;
         case GET_RANDOM_BUSH:
@@ -116,20 +135,22 @@ function reducer({ action, payload }) {
         case CLICK_VIRUS:
             break;
         case GAME_OVER:
-            gameState.gameIsPlaying = false;
+            gameState.gameIsPlaying = payload.gameIsPlaying;
+            alert("WINNER IS " + payload.user.userId)
+            enableStartGameButton(!gameState.gameIsPlaying)
             break;
         case ON_USER_JOIN:
             //ADD USER TO LIST OF USER
-            addUserToList(payload)
+            addUsersToListState(payload)
             renderUserList(gameState.users)
-            console.log(payload)
             break;
         case ON_USER_LEAVE:
-            console.log(payload)
+            renderUserList(payload)
+            enableStartGameButton(payload.length >= 2)
             break;
         case ALL_USER_JOINED:
             //ALL CONDITIONS MET TO START THE GAME
-            enableStartGame(payload)
+            enableStartGameButton(payload)
             break;
         case ON_ERROR:
             //SHOW ERROR IN UI
@@ -143,10 +164,6 @@ function reducer({ action, payload }) {
 
 
 function showVirus() {
-    if (!gameState.gameIsPlaying) {
-        alert("GAME OVER")
-    }
-
     if (gameState.gameIsPlaying) {
         sendMessageObject({ action: GET_RANDOM_BUSH, payload: bushes.length }, RANDOM_NERDS_SERVER);
         let bush = bushes[gameState.randomBush]
@@ -162,6 +179,7 @@ function showVirus() {
 
 function getScore() {
     sendMessageObject({ action: CALCULATE_SCORE, payload: { userId: client.clientId } }, RANDOM_NERDS_SERVER)
+    shotGunAudio.play()
 }
 
 function displayPlayerScore(id, score) {
@@ -170,14 +188,16 @@ function displayPlayerScore(id, score) {
 }
 
 
-function enableStartGame(condition) {
+function enableStartGameButton(condition) {
     if (condition) {
         btnStartGame.style.display = "block";
+    } else {
+        btnStartGame.style.display = "none";
     }
 }
 
 
-function addUserToList(arrayUsers) {
+function addUsersToListState(arrayUsers) {
     arrayUsers.forEach(user => {
         if (gameState.users.findIndex(u => u.userId == user.userId) == -1) {
             gameState.users.push(user)
@@ -198,6 +218,14 @@ function renderUserList(arrayUsers) {
 }
 
 
+function resetCurrentUser(arrayUsers) {
+    arrayUsers.forEach(user => {
+        if (user.userId == client.clientId) {
+            playerScoreText.innerHTML = 0;
+        }
+    })
+}
+
 
 
 //@TODO:
@@ -209,4 +237,48 @@ viruses.forEach(virus => {
     virus.addEventListener("click", getScore)
 })
 
+
+//ImageVirusSlash
+
+
+
+//AUDIO SPLASH
+soundIcon.addEventListener("click", () => {
+    if (splashAudio.muted) {
+        // splashAudio.currentTime = 0;
+        splashAudio.muted = false;
+        splashAudio.play();
+    } else {
+        splashAudio.muted = true;
+        splashAudio.pause();
+    }
+
+})
+
+setTimeout(() => {
+    splashAudio.volume = 0.2
+}, 13000)
+
+
+
+
+//ANIMATION  SPLASH
+setTimeout(() => {
+    splash.classList.add("animated")
+    splash.classList.add("zoomOut")
+    setTimeout(() => {
+        splash.style.display = "none";
+    }, 900)
+}, 15000)
+
+
+function gameUserRegistrationShow() {
+    playersListContainer.style.display = "block"
+    virusesGameField.style.display = "block";
+    dashboard.style.display = "block";
+}
+
+window.addEventListener("beforeunload", () => {
+    sendMessageObject({ action: ON_USER_LEAVE, payload: client.clientId }, RANDOM_NERDS_SERVER)
+})
 

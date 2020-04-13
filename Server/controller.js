@@ -10,12 +10,15 @@ const sendMessageObject = (obj) => {
 }
 
 
-const users = [];
+const gameState = {
+    gameIsPlaying: true
+}
+
+let users = [];
 
 function getRandomBush(bshSize) {
     return Math.floor(Math.random() * bshSize);
 }
-
 
 function generateRandomTime(min = 300, max = 1000) {
     return Math.floor(Math.random() * (max - min) + min)
@@ -24,15 +27,7 @@ function generateRandomTime(min = 300, max = 1000) {
 function calculateScore({ userId }) {
     let user = users.find(u => u.userId == userId)
     user.userScore = user.userScore + 1;
-    let gameIsPlaying = true;
-
-    if (user.userScore == 3) {
-        gameIsPlaying = false;
-    }
-
-    return {
-        user, gameIsPlaying, users
-    }
+    return { user, users }
 }
 
 const reducer = ({ action, payload }) => {
@@ -41,27 +36,34 @@ const reducer = ({ action, payload }) => {
             if (!canStartGame(users)) {
                 return { action: ON_ERROR, payload: "The Game cannot be started. Please wait for second user to join" }
             }
+
+            gameState.gameIsPlaying = true;
             //SET SCORE TO 0 FOR EACH
             users.forEach(us => us.userScore = 0)
-            return { action: START_THE_GAME, payload: true }
+            return { action: START_THE_GAME, payload: { gameIsPlaying: gameState.gameIsPlaying, users: users } }
         case GET_RANDOM_BUSH:
             const rndBush = getRandomBush(payload);
             const rndTime = generateRandomTime();
             return { action: GET_RANDOM_BUSH, payload: { rndBush, rndTime } }
         case CALCULATE_SCORE:
-            return { action: CALCULATE_SCORE, payload: calculateScore(payload) }
+            if (gameState.gameIsPlaying) {
+                const usersWithScore = calculateScore(payload);
+                if (usersWithScore.user.userScore == 3) {
+                    sendMessageObject({ action: GAME_OVER, payload: { gameIsPlaying: false, user: usersWithScore.user } })
+                }
+                return { action: CALCULATE_SCORE, payload: usersWithScore }
+            } else {
+                break;
+            }
         case ON_USER_JOIN:
             users.push(payload);
             if (canStartGame(users)) {
                 sendMessageObject({ action: ALL_USER_JOINED, payload: true })
             }
             return { action: ON_USER_JOIN, payload: users }
-            break;
         case ON_USER_LEAVE:
-            console.log('LEAVE')
-            removeUserFromList(payload, users);
+            removeUserFromList(payload);
             return { action: ON_USER_LEAVE, payload: users }
-
         default:
             return { action: "Default action" }
     }
@@ -69,15 +71,14 @@ const reducer = ({ action, payload }) => {
 
 
 function canStartGame(users) {
-    if (users.length == 2) {
+    if (users.length >= 2) {
         return true;
     }
-
     return false;
 }
 
 
-function removeUserFromList(id, users) {
+function removeUserFromList(id) {
     users = users.filter(u => u.userId != id)
 }
 
