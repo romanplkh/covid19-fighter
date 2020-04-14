@@ -141,6 +141,7 @@ li hr {
 
 #virus-image-splash {
   animation: spin 8s linear infinite;
+  height: 40%;
 }
 
 #splash-title {

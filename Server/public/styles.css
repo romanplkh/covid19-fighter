@@ -230,7 +230,7 @@ li hr {
   left: 50%;
   max-width: 50%;
   position: absolute;
-  top: 80%;
+  bottom: 10%;
   transform: translate3d(-50%, -50%, 0);
 }
 
