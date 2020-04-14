@@ -1,6 +1,6 @@
 const server = require("./mqttHelper").mqttHelper
 
-const { acitons: { CALCULATE_SCORE, START_THE_GAME, GET_RANDOM_BUSH, CLICK_VIRUS, ON_USER_JOIN, GAME_OVER, ALL_USER_JOINED, ON_ERROR, ON_USER_LEAVE } } = require("./actions")
+const { acitons: { CALCULATE_SCORE, START_THE_GAME, GET_RANDOM_BUSH, ON_USER_JOIN, GAME_OVER, ALL_USER_JOINED, ON_ERROR, ON_USER_LEAVE } } = require("./actions")
 
 
 const RANDOM_NERDS_CLIENT = "randomnerdsClient";
@@ -51,7 +51,6 @@ const reducer = ({ action, payload }) => {
             return { action: ON_USER_JOIN, payload: users }
         case ON_USER_LEAVE:
             removeUserFromList(payload);
-
             return { action: ON_USER_LEAVE, payload: users }
         default:
             return { action: "Default action" }

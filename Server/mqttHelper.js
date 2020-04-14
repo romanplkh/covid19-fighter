@@ -2,9 +2,11 @@ const mqtt = require("mqtt");
 const { RANDOM_NERDS_SERVER } = { RANDOM_NERDS_SERVER: "randomnerdsServer" }
 
 const config = {
+    port: 1883,
     clientId: "roman",
     username: "hack",
-    password: "hack1234"
+    password: "hack1234",
+
 }
 
 const server = mqtt.connect("mqtt://mga.twilightparadox.com", config)
