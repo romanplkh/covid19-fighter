@@ -4,6 +4,7 @@ const { acitons: { CALCULATE_SCORE, START_THE_GAME, GET_RANDOM_BUSH, ON_USER_JOI
 
 
 const RANDOM_NERDS_CLIENT = "randomnerdsClient";
+const WINNING_SCORE = 10;
 
 const sendMessageObject = (obj) => {
     server.publish(RANDOM_NERDS_CLIENT, JSON.stringify(obj))
@@ -35,7 +36,7 @@ const reducer = ({ action, payload }) => {
         case CALCULATE_SCORE:
             if (gameState.gameIsPlaying) {
                 const usersWithScore = calculateScore(payload);
-                if (usersWithScore.user.userScore == 3) {
+                if (usersWithScore.user.userScore == WINNING_SCORE) {
                     sendMessageObject({ action: GAME_OVER, payload: { gameIsPlaying: false, user: usersWithScore.user } })
                 }
                 return { action: CALCULATE_SCORE, payload: usersWithScore }
@@ -43,6 +44,7 @@ const reducer = ({ action, payload }) => {
                 break;
             }
         case ON_USER_JOIN:
+            console.log(`JOINED: ${payload.userId}`)
             users.push(payload);
             if (canStartGame(users)) {
                 sendMessageObject({ action: ALL_USER_JOINED, payload: true })
