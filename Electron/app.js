@@ -13,12 +13,14 @@ function createWindow() {
         maximizable: true,
         fullscreenable: true,
         fullscreenWindowTitle: true,
-
         title: "Covid 19 Fighter",
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            devTools: false
         }
     })
+
+    win.removeMenu();
 
     const pathToFile = path.join(__dirname, "public", "game.html")
     win.loadFile(pathToFile)
