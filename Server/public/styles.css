@@ -143,8 +143,7 @@ li hr {
 #virus-image-splash {
   /* animation: spin 8s linear infinite; */
   height: 55%;
-  margin: auto 20;
-  z-index: 10;
+  /* margin: auto 20; */
 }
 
 #splash-title {
@@ -158,6 +157,7 @@ li hr {
 
   #virus-image-splash {
     height: 45%;
+    margin-top: 2em;
   }
 }
 
