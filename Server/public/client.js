@@ -36,10 +36,13 @@ const virusesGameField = document.querySelector("#viruses-game-field");
 const dashboard = document.querySelector("#dashboard")
 const smashAudio = document.querySelector("#smash")
 const errorAlert = document.querySelector("#errorAlert")
-// splashAudio.setAttribute("muted", true)
+const countDown = document.querySelector("#countDown");
+const winnerModal = document.querySelector("#winner-modal");
+const winnerModalName = document.querySelector("#winner-modal-name");
 
 
-let client = {};
+
+let client = null;
 
 const titles = ["The Mammoth",
     "The Martyr",
@@ -131,17 +134,17 @@ function onMessageArrived(message) {
 function sendMessageObject(value, destination) {
     const message = new Paho.MQTT.Message(JSON.stringify(value));
     message.destinationName = destination;
-    client.send(message)
+    if (client) {
+        client.send(message)
+    }
 }
 
 
 const gameState = {
     randomBush: 0,
     gameIsPlaying: false,
-    // score: 0,
-    randomTime: 300,
-    playerScore: 0,
-    // users: []
+    randomTime: 0,
+    playerScore: 0
 };
 
 
@@ -160,26 +163,28 @@ function reducer({ action, payload }) {
             gameState.gameIsPlaying = payload.gameIsPlaying;
             //Hide start button
             enableStartGameButton(!gameState.gameIsPlaying);
+            renderGameGraphics();
             //RESET USERS SCORE
             resetCurrentUser(payload.users)
+            //DISPLAY USERS LIST WHEN GAME IS RESTARTED
             renderUserList(payload.users)
-            showVirus()
+            //TURN OFF AUDIO
+            splashAudio.pause();
             break;
         case GET_RANDOM_BUSH:
             gameState.randomBush = payload.rndBush;
             gameState.randomTime = payload.rndTime;
             break;
-        case CLICK_VIRUS:
-            break;
         case GAME_OVER:
             gameState.gameIsPlaying = payload.gameIsPlaying;
-            alert("WINNER IS " + payload.user.userId)
             enableStartGameButton(!gameState.gameIsPlaying)
             gameCursorEnable(false)
+            showGameField(false)
+            virusesGameField.removeEventListener("click", shotGunAudioListener)
+            showWinnerModal(true, payload.user.userId)
             break;
         case ON_USER_JOIN:
             //ADD USER TO LIST OF USER
-            //addUsersToListState(payload)
             renderUserList(payload)
             break;
         case ON_USER_LEAVE:
@@ -191,7 +196,8 @@ function reducer({ action, payload }) {
             enableStartGameButton(payload)
             break;
         case ON_ERROR:
-            //SHOW ERROR IN UI
+            //SHOW SERVER ERROR IN UI
+            toggleError(true, payload)
             break;
         default:
             return { action: "Default action" }
@@ -199,19 +205,47 @@ function reducer({ action, payload }) {
 }
 
 
+function showGameField(condition) {
+    if (condition) {
+        virusesGameField.style.display = "block"
+    } else {
+        virusesGameField.style.display = "none"
+    }
+}
 
+//COUNDOWN TOGGLER
+
+function showCountDown(condition) {
+    if (condition) {
+        countDown.style.display = "block"
+    } else {
+        countDown.style.display = "none"
+    }
+}
+
+function shotGunAudioListener(ev) {
+    if (ev.target.className != "virus") {
+        shotGunAudio.play()
+    }
+}
+
+
+function renderGameGraphics() {
+    showCountDown(true);
+    setTimeout(() => {
+        showCountDown(false);
+        showGameField(true)
+        gameCursorEnable(true)
+        virusesGameField.addEventListener("click", shotGunAudioListener)
+        showVirus()
+    }, 3700)
+}
+
+//BUTTON START GAME
 btnStartGame.addEventListener("click", (ev) => {
     //STOP AUDIO SPLASH
-    splashAudio.pause();
+
     sendMessageObject({ action: START_THE_GAME }, RANDOM_NERDS_SERVER)
-    gameCursorEnable(true)
-
-    virusesGameField.addEventListener("click", (ev) => {
-        if (ev.target.className != "virus") {
-            shotGunAudio.play()
-        }
-
-    })
 })
 
 
@@ -244,29 +278,34 @@ function displayPlayerScore(id, score) {
 
 function enableStartGameButton(condition) {
     if (condition) {
-        btnStartGame.style.display = "block";
+        btnStartGame.style.display = "inline-block";
     } else {
         btnStartGame.style.display = "none";
     }
 }
 
 
-function addUsersToListState(arrayUsers) {
-    arrayUsers.forEach(user => {
-        if (gameState.users.findIndex(u => u.userId == user.userId) == -1) {
-            gameState.users.push(user)
-        }
-    })
 
+//WINNER MODAL
+function showWinnerModal(condition, winner) {
+    if (condition) {
+        winnerModal.style.display = "flex";
+        winnerModalName.innerHTML = winner ?? "";
+        setTimeout(() => showWinnerModal(false, ""), 8500)
+    } else {
+        winnerModal.style.display = "none"
+        winnerModalName.innerHTML = "";
+    }
 }
+
 
 
 function renderUserList(arrayUsers) {
     usersListUL.innerHTML = ""
     arrayUsers.forEach(user => {
         let userLi = document.createElement("li");
-        let userLiText = document.createTextNode(`User: ${user.userId} Score: ${user.userScore}`);
-        userLi.appendChild(userLiText);
+        let userLiText = `User: ${user.userId} <br> Score: ${user.userScore} <hr>`;
+        userLi.innerHTML = userLiText;
         usersListUL.appendChild(userLi);
     })
 }
@@ -284,14 +323,12 @@ function hideErrorClick() {
     toggleError(false, "")
 }
 
-//@TODO:
 function toggleError(show, error) {
     errorAlert.classList.remove("bounceInLeft");
     errorAlert.classList.remove("bounceOutRight");
     errorAlert.classList.remove("animated");
 
     if (show) {
-
         errorAlert.style.display = "block";
         errorAlert.classList.add("animated");
         errorAlert.classList.add("bounceInLeft");
@@ -328,8 +365,6 @@ function gameCursorEnable(condition) {
 
 }
 
-
-
 //AUDIO SPLASH
 soundIcon.addEventListener("click", () => {
     if (splashAudio.muted) {
@@ -349,7 +384,6 @@ setTimeout(() => {
 
 
 
-
 //ANIMATION  SPLASH
 setTimeout(() => {
     splash.classList.add("animated")
@@ -357,16 +391,20 @@ setTimeout(() => {
     setTimeout(() => {
         splash.style.display = "none";
     }, 900)
-}, 100)
+}, 15000)
 
 
+
+//REGISTRATION FORM
 function hideGameRegistrationForm() {
     playersListContainer.style.display = "block"
-    virusesGameField.style.display = "block";
-    dashboard.style.display = "block";
+    dashboard.style.display = "flex";
 }
 
 window.addEventListener("beforeunload", () => {
-    sendMessageObject({ action: ON_USER_LEAVE, payload: client.clientId }, RANDOM_NERDS_SERVER)
+    if (client) {
+        sendMessageObject({ action: ON_USER_LEAVE, payload: client.clientId }, RANDOM_NERDS_SERVER)
+    }
+
 })
 

@@ -16,19 +16,7 @@ const gameState = {
 
 let users = [];
 
-function getRandomBush(bshSize) {
-    return Math.floor(Math.random() * bshSize);
-}
 
-function generateRandomTime(min = 300, max = 1000) {
-    return Math.floor(Math.random() * (max - min) + min)
-}
-
-function calculateScore({ userId }) {
-    let user = users.find(u => u.userId == userId)
-    user.userScore = user.userScore + 1;
-    return { user, users }
-}
 
 const reducer = ({ action, payload }) => {
     switch (action) {
@@ -71,6 +59,20 @@ const reducer = ({ action, payload }) => {
 }
 
 
+function getRandomBush(bshSize) {
+    return Math.floor(Math.random() * bshSize);
+}
+
+function generateRandomTime(min = 300, max = 800) {
+    return Math.floor(Math.random() * (max - min) + min)
+}
+
+function calculateScore({ userId }) {
+    let user = users.find(u => u.userId == userId)
+    user.userScore = user.userScore + 1;
+    return { user, users }
+}
+
 function canStartGame(users) {
     if (users.length >= 2) {
         return true;
@@ -81,6 +83,7 @@ function canStartGame(users) {
 
 function removeUserFromList(id) {
     users = users.filter(u => u.userId != id)
+    console.log(users)
 }
 
 server.on('message', function (topic, message) {
