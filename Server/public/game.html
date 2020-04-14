@@ -15,6 +15,7 @@
 
   <body>
 
+    <!-- ERROR ALERT -->
     <div id="errorAlert" class="alert alert-success alert-dismissible fade show" role="alert">
       <p id="error-text"></p>
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -22,13 +23,12 @@
       </button>
     </div>
 
+
+    <!-- SPLASH SCREEN -->
     <div id="splash" class="text-center">
-
-      <i class="fa fa-volume-up"></i>
-      <h1 id="splash-title" class=" text-success mt-5">COVID-19 FIGHTER</h1>
+      <i id="volume-icon" class="fa fa-volume-off"></i>
+      <h1 id="splash-title" class=" text-success mt-5 pt-5">COVID-19 FIGHTER</h1>
       <img src="img/Virus.svg" class="mt-5" id="virus-image-splash" alt="image">
-
-
       <div class="progress-bar">
         <span class="bar">
           <span class="progress"></span>
@@ -66,9 +66,10 @@
       </div>
     </div>
 
+    <!-- PLAYERS LIST -->
     <div class="container-fluid">
       <div class="row">
-        <div id="playersContainer" class="col-md-2 text-center">
+        <div id="playersContainer" class="col-md-2 pr-0 text-center">
           <div class="usersListContainer mt-5">
             <h1>Players: </h1>
             <ul id="usersList">
@@ -76,6 +77,7 @@
           </div>
         </div>
 
+        <!-- REGISTRATION PLAYER -->
         <div class="col-md px-0 mx-0">
           <div class="container-fluid mt-5">
             <div class="row justify-content-center">
@@ -85,11 +87,12 @@
                     <h1 class="display-4">Username:</h1>
                     <input class="form-control" type="text" id="userName" />
                   </div>
-                  <button id="registerPlayer" class="btn btn-warning">Save</button>
+                  <button id="registerPlayer" class="btn btn-lg btn-success">REGISTER</button>
                 </div>
               </div>
             </div>
 
+            <!-- DASHBOARD -->
             <div id="dashboard" class="row">
               <div class="col">
                 <div class="row">
@@ -110,6 +113,7 @@
           </div>
 
 
+          <!-- GAME FIELDS -->
           <div id="viruses-game-field" class="container mt-5">
             <div class="row">
               <div class="col-md-4 my-5">
@@ -161,8 +165,7 @@
 
 
     <!-- WINNER MODAL -->
-
-    <div id="winner-modal">
+    <div id="winner-modal" class="animated zoomIn">
       <!-- <span aria-hidden="true" id="modal-close-btn">&times;</span> -->
       <h2 class="pt-1 text-white">The Winner is: </h2>
       <h1 id="winner-modal-name" class="display-4 text-success">ROMAN</h1>

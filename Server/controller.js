@@ -24,7 +24,6 @@ const reducer = ({ action, payload }) => {
             if (!canStartGame(users)) {
                 return { action: ON_ERROR, payload: "The Game cannot be started. Please wait for second user to join" }
             }
-
             gameState.gameIsPlaying = true;
             //SET SCORE TO 0 FOR EACH
             users.forEach(us => us.userScore = 0)

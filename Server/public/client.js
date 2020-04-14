@@ -1,5 +1,7 @@
 const { RANDOM_NERDS_SERVER, RANDOM_NERDS_CLIENT } = { RANDOM_NERDS_SERVER: "randomnerdsServer", RANDOM_NERDS_CLIENT: "randomnerdsClient" }
 
+const ANIMATION_SPLASH_DURATION = 15000;
+
 //ACTIONS
 const { CALCULATE_SCORE, START_THE_GAME, GET_RANDOM_BUSH, ON_USER_JOIN, GAME_OVER, ALL_USER_JOINED, ON_ERROR, ON_USER_LEAVE } = {
     CALCULATE_SCORE: "CALCULATE_SCORE",
@@ -28,7 +30,7 @@ const personalDataBlock = document.querySelector("#personalData");
 const splash = document.querySelector("#splash");
 const splashAudio = document.querySelector("#splash-audio");
 const shotGunAudio = document.querySelector("#shotgun");
-const soundIcon = document.querySelector(".fa-volume-up");
+const soundIcon = document.querySelector("#volume-icon");
 const virusImageSplash = document.querySelector("#virus-image-splash");
 const playersListContainer = document.querySelector("#playersContainer");
 const virusesGameField = document.querySelector("#viruses-game-field");
@@ -39,6 +41,9 @@ const countDown = document.querySelector("#countDown");
 const winnerModal = document.querySelector("#winner-modal");
 const winnerModalName = document.querySelector("#winner-modal-name");
 
+
+//FOR ELECTRON
+//splashAudio.play();
 
 
 let client = null;
@@ -98,15 +103,8 @@ registerPlayerBtn.addEventListener("click", () => {
 
 // SUNSCRIBE
 function onConnect() {
-
-
     //VALIDATE USERNAME IS NOT ALREADY TAKEN
-
-
-
-
     client.subscribe(RANDOM_NERDS_CLIENT);
-    console.log("connected " + client.clientId)
     sendMessageObject({ action: ON_USER_JOIN, payload: { userId: client.clientId, userScore: 0 } }, RANDOM_NERDS_SERVER)
     personalDataBlock.style.display = "none";
 
@@ -117,9 +115,9 @@ function onConnect() {
 
 
 function onConnectionLost(responseObject) {
-    console.log(responseObject)
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
+        // toggleError(true, responseObject.errorMessage)
     }
 }
 
@@ -142,8 +140,7 @@ function sendMessageObject(value, destination) {
 const gameState = {
     randomBush: 0,
     gameIsPlaying: false,
-    randomTime: 0,
-    playerScore: 0
+    randomTime: 0
 };
 
 
@@ -298,14 +295,22 @@ function showWinnerModal(condition, winner) {
 }
 
 
+//Handle animation in list
+let userListIds = []
+
 
 function renderUserList(arrayUsers) {
     usersListUL.innerHTML = ""
     arrayUsers.forEach(user => {
         let userLi = document.createElement("li");
+        if (userListIds.indexOf(user.userId) == -1) {
+            userLi.classList.add("animated", "bounceInUp");
+        }
+
         let userLiText = `User: ${user.userId} <br> Score: ${user.userScore} <hr>`;
         userLi.innerHTML = userLiText;
         usersListUL.appendChild(userLi);
+        userListIds.push(user.userId)
     })
 }
 
@@ -370,9 +375,11 @@ soundIcon.addEventListener("click", () => {
         // splashAudio.currentTime = 0;
         splashAudio.muted = false;
         splashAudio.play();
+        soundIcon.classList.replace("fa-volume-off", "fa-volume-up")
     } else {
         splashAudio.muted = true;
         splashAudio.pause();
+        soundIcon.classList.replace("fa-volume-up", "fa-volume-off")
     }
 
 })
@@ -390,7 +397,7 @@ setTimeout(() => {
     setTimeout(() => {
         splash.style.display = "none";
     }, 900)
-}, 15000)
+}, ANIMATION_SPLASH_DURATION)
 
 
 
