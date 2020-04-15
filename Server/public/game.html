@@ -3,13 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>COVID-19 FIGHTER</title>
     <link
       href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/superhero/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-R/oa7KS0iDoHwdh4Gyl3/fU7pgvSCt7oyuQ79pkw+e+bMWD9dzJJa+Zqd+XJS0AD"
       crossorigin="anonymous"
     />
+    <link rel="shortcut icon" href="" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css"
@@ -104,7 +105,7 @@
       <div class="row">
         <div id="playersContainer" class="col-md-2 pr-0 text-center">
           <div class="usersListContainer mt-5">
-            <h1>Players:</h1>
+            <h1 class="text-danger">Fighters:</h1>
             <ul id="usersList"></ul>
           </div>
         </div>
@@ -132,12 +133,12 @@
                 <div class="row">
                   <div class="col-md-6 text-center">
                     <h1 class="display-4 text-warning" id="txtPlayer">
-                      Player: <span class="text-success" id="playerName"></span>
+                      <span class="text-success" id="playerName"></span>
                     </h1>
                   </div>
                   <div class="col-md-6 text-center">
                     <h1 class="display-4 text-warning" id="txtScore">
-                      Score: <span id="playerScore" class="text-success"></span>
+                      Score: <span id="playerScore" class="text-warning"></span>
                     </h1>
                   </div>
                 </div>
@@ -195,7 +196,7 @@
     </div>
 
     <!-- WINNER MODAL -->
-    <div id="winner-modal" class="animated zoomIn">
+    <div id="winner-modal">
       <!-- <span aria-hidden="true" id="modal-close-btn">&times;</span> -->
       <h2 class="pt-1 text-white">The Winner is:</h2>
       <h1 id="winner-modal-name" class="display-4 text-success">ROMAN</h1>
