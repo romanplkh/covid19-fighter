@@ -171,15 +171,18 @@ function reducer({ action, payload }) {
       break;
     case START_THE_GAME:
       gameState.gameIsPlaying = payload.gameIsPlaying;
-      //Hide start button
-      enableStartGameButton(!gameState.gameIsPlaying);
-      renderGameGraphics();
-      //RESET USERS SCORE
-      resetCurrentUser(payload.users);
-      //DISPLAY USERS LIST WHEN GAME IS RESTARTED
-      renderUserList(payload.users);
-      //TURN OFF AUDIO
-      splashAudio.pause();
+      if (gameState.gameIsPlaying) {
+        //Hide start button
+        enableStartGameButton(!gameState.gameIsPlaying);
+        renderGameGraphics();
+        //RESET USERS SCORE
+        resetCurrentUser(payload.users);
+        //DISPLAY USERS LIST WHEN GAME IS RESTARTED
+        renderUserList(payload.users);
+        //TURN OFF AUDIO
+        splashAudio.pause();
+      }
+
       break;
     case GET_RANDOM_BUSH:
       gameState.randomBush = payload.rndBush;
@@ -297,6 +300,9 @@ function enableStartGameButton(condition) {
 function showWinnerModal(condition, winner) {
   if (condition) {
     winnerModal.style.display = "flex";
+
+    winner = winner == client.clientId ? "IT'S YOU!!!" : winner;
+
     winnerModalName.innerHTML = winner ?? "";
     setTimeout(() => showWinnerModal(false, ""), 8500);
   } else {
@@ -316,7 +322,15 @@ function renderUserList(arrayUsers) {
       userLi.classList.add("animated", "bounceInUp");
     }
 
-    let userLiText = `User: ${user.userId} <br> Score: ${user.userScore} <hr>`;
+    let userLiText = ``;
+
+    if (user.userId == client.clientId) {
+      userLiText = `<span class="text-danger">You</span><br> <span class="text-warning">Score:  ${user.userScore}</span> <hr>`;
+    } else {
+      userLiText = `${user.userId} <br> <span class="text-warning">Score:  ${user.userScore} </span> <hr>`;
+    }
+
+    // let userLiText = `Player: ${user.userId} <br> <span class="text-warning">Score:</span>  ${user.userScore} <hr>`;
     userLi.innerHTML = userLiText;
     usersListUL.appendChild(userLi);
     userListIds.push(user.userId);

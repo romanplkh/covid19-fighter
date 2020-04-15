@@ -7,7 +7,7 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use("/", (req, res, next) => {
   res.sendFile(`${__dirname}/public/game.html`);
-  //res.sendFile(`${__dirname}/public/test.html`)
+  //res.sendFile(`${__dirname}/public/test.html`);
 });
 
 app.listen(port, () => {

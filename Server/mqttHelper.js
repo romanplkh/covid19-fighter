@@ -3,7 +3,7 @@ const { RANDOM_NERDS_SERVER } = { RANDOM_NERDS_SERVER: "randomnerdsServer" };
 
 const config = {
   port: 1883,
-  clientId: "roman_local",
+  clientId: "roman",
   username: "hack",
   password: "hack1234",
 };
