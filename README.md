@@ -1,9 +1,11 @@
-# Covid19-fighter
+## Covid19-fighter
 
 
 
 ## MVP Game Jam Hack-a-thon
+
 ### MVP Game application for March Madness Game Jam Hack-a-thon
+https://github.com/romanplkh/covid19-fighter/blob/master/c19f.mp4
 
 **The Premise:** With no knowledge of assignment, participants must produce an mvp within the allotted timeframe.
 
