@@ -13,7 +13,7 @@
   "author": "Roman Pelikh",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^8.2.2",
+    "electron": "^13.6.6",
     "electron-packager": "^14.2.1"
   }
 }
